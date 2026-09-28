@@ -1,0 +1,23 @@
+{
+  "name": "@litbase/shared",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./identifiers": "./src/identifiers.ts",
+    "./de": "./src/de.ts",
+    "./catalog-text": "./src/catalog-text.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.1"
+  }
+}

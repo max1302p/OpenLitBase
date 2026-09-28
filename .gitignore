@@ -1,0 +1,15 @@
+node_modules
+dist
+.output
+.wxt
+*.tsbuildinfo
+.env
+.env.local
+.env.cloud
+apps/api/public
+data
+.DS_Store
+
+# Interne Notizen (nicht veröffentlichen, Claude liest sie lokal)
+docs/internal/
+CLAUDE.local.md

@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+**/.output
+**/.wxt
+apps/api/public
+.git
+.env
+data

@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`IEEE (Deutsch, Seite im Verzeichnis) > formatiert alle Typen nach Merkblatt 1`] = `
+[
+  "[1] A. Müller, P. Schmid, Grundlagen der Informatik, 3. Auflage. Berlin: Springer Vieweg, 2021.",
+  "[2] Y. LeCun, Y. Bengio, G. Hinton, „Deep learning,“ Nature, Bd. 521, Nr. 7553, S. 436–444, Mai 2015, doi: 10.1038/nature14539.",
+  "[3] A. Vaswani, N. Shazeer, „Attention is all you need,“ in Advances in Neural Information Processing Systems, hrsg. von I. Guyon, Red Hook, NY: Curran Associates, Dez. 2017, S. 5998–6008.",
+  "[4] Hochschule Musterstadt, „Zitieren und Referenzieren,“ Bibliothek Hochschule Musterstadt. [Online] Available: https://www.example.org/bibliothek/zitieren (Abrufdatum 12.03.2024)",
+  "[5] Deutsches Institut für Normung, Qualitätsmanagementsysteme – Anforderungen, DIN EN ISO 9001:2015, Beuth, Berlin, November 2015.",
+  "[6] A. Vaswani, „Attention is all you need,“ 2017, arXiv:1706.03762. [Online] Available: https://arxiv.org/abs/1706.03762",
+  "[7] L. Keller, „Literaturverwaltung im Studium,“ Bachelorarbeit, Hochschule Musterstadt, Musterstadt, o. J.",
+]
+`;

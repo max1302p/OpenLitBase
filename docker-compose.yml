@@ -1,0 +1,89 @@
+# Start: `docker compose up` (ohne .env läuft alles im Modus "single" auf https://localhost:1450).
+# Nur Datenbank für die lokale Entwicklung: `docker compose up db`.
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: litbase
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-litbase}
+      POSTGRES_DB: litbase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '127.0.0.1:${DB_PORT:-5432}:5432'
+    # Container-Logs begrenzen (enthalten keine IP-Adressen, aber sollen nicht unbegrenzt wachsen).
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U litbase -d litbase']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    # Container-Logs begrenzen (enthalten keine IP-Adressen, aber sollen nicht unbegrenzt wachsen).
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    depends_on:
+      db:
+        condition: service_healthy
+    # Werte kommen aus der Shell oder aus `.env` (siehe .env.example).
+    environment:
+      AUTH_MODE: ${AUTH_MODE:-single}
+      BASE_URL: ${BASE_URL:-https://localhost:1450}
+      # HTTPS mit eigener lokaler CA: auto (bei lokaler https-BASE_URL), on, off (Reverse-Proxy).
+      TLS: ${TLS:-auto}
+      # Immer der mitgelieferte db-Container (DATABASE_URL in .env gilt nur für `pnpm dev`).
+      DATABASE_URL: postgres://litbase:${POSTGRES_PASSWORD:-litbase}@db:5432/litbase
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      # Optional: Rechtstexte der Betreiberin (Login-Seite, Konto-Menü, E-Mails, Zustimmung bei der Registrierung)
+      LEGAL_IMPRINT_URL: ${LEGAL_IMPRINT_URL:-}
+      LEGAL_PRIVACY_URL: ${LEGAL_PRIVACY_URL:-}
+      LEGAL_TERMS_URL: ${LEGAL_TERMS_URL:-}
+      AVATAR_URL: ${AVATAR_URL:-}
+      SOURCE_URL: ${SOURCE_URL:-}
+      UPDATE_CHECK: ${UPDATE_CHECK:-}
+      UPDATE_CHECK_URL: ${UPDATE_CHECK_URL:-}
+      UPLOAD_DIR: /data/uploads
+      # Optional: PDFs und Logos auf S3 statt im Volume „uploads“ (vorhandene Dateien werden übernommen)
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-}
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-}
+      # Optional: nächtliche Datenbank-Sicherung (pg_dump) in diesen Bucket
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-}
+      BACKUP_HOUR: ${BACKUP_HOUR:-}
+      CERT_DIR: /data/certs
+      CUSTOM_STYLES_DIR: /data/styles
+      FORCE_COLOR: ${FORCE_COLOR:-}
+    ports:
+      - '${APP_PORT:-1450}:1450'
+    volumes:
+      - uploads:/data/uploads
+      # Lokale CA und Serverzertifikat – bleiben erhalten, damit man der CA nur einmal vertraut.
+      - certs:/data/certs
+      # Eigene Zitierstile: .csl-Datei in ./custom-styles legen (Locales in ./custom-styles/locales).
+      - ./custom-styles:/data/styles:ro
+
+volumes:
+  pgdata:
+  uploads:
+  certs:

@@ -1,0 +1,22 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Workspace-Pakete im Root-node_modules verlinken, damit Imports wie
+# `@litbase/ui/lib/utils` auch aus packages/ui selbst heraus auflösbar sind.
+publicHoistPattern:
+  - '@litbase/*'
+
+minimumReleaseAgeExclude:
+  - lucide-react@1.48.0
+  - '@better-auth/core@1.7.6'
+  - '@better-auth/drizzle-adapter@1.7.6'
+  - '@better-auth/kysely-adapter@1.7.6'
+  - '@better-auth/memory-adapter@1.7.6'
+  - '@better-auth/mongo-adapter@1.7.6'
+  - '@better-auth/prisma-adapter@1.7.6'
+  - '@better-auth/telemetry@1.7.6'
+  - better-auth@1.7.6
+
+allowBuilds:
+  esbuild: true

@@ -1,0 +1,25 @@
+{
+  "name": "litbase",
+  "version": "0.8.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @litbase/api --filter @litbase/web dev",
+    "dev:addin": "pnpm --filter @litbase/word-addin dev",
+    "dev:extension": "pnpm --filter @litbase/extension dev",
+    "build:extension": "pnpm --filter @litbase/extension build",
+    "build": "pnpm --filter @litbase/web --filter @litbase/word-addin --filter @litbase/api build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --if-present test",
+    "db:generate": "pnpm --filter @litbase/api db:generate",
+    "db:migrate": "pnpm --filter @litbase/api db:migrate"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.0"
+  }
+}

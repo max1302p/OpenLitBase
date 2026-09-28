@@ -1,0 +1,12 @@
+@import "@litbase/ui/globals.css";
+@source "./";
+
+/* citeproc-HTML: Nummer und Eintrag nebeneinander (second-field-align). */
+.csl-bibliography .csl-entry:has(.csl-left-margin) {
+  display: flex;
+  gap: 0.75rem;
+}
+.csl-bibliography .csl-left-margin {
+  flex: none;
+  min-width: 2.5rem;
+}

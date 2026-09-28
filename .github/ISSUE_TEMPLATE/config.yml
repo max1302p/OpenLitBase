@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sicherheitslücke melden
+    url: https://github.com/max1302p/OpenLitBase/security/advisories/new
+    about: Bitte vertraulich melden, nicht als öffentliches Issue.
+  - name: Fragen und Ideen
+    url: https://github.com/max1302p/OpenLitBase/discussions
+    about: Für Fragen zur Nutzung und offene Diskussionen.
+  - name: Anleitung zur Einrichtung
+    url: https://openlitbase.de/start
+    about: Schritt für Schritt für Cloud, eigenen Rechner und eigenen Server.

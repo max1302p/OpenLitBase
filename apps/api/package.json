@@ -1,0 +1,46 @@
+{
+  "name": "@litbase/api",
+  "version": "0.8.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx --env-file-if-exists=../../.env src/db/migrate-cli.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1141.0",
+    "@aws-sdk/lib-storage": "^3.1141.0",
+    "@citation-js/core": "^0.9.0",
+    "@citation-js/plugin-bibtex": "^0.9.0",
+    "@citation-js/plugin-ris": "^0.9.0",
+    "@hono/node-server": "^2.1.0",
+    "@hono/zod-validator": "^0.9.0",
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "better-auth": "^1.7.6",
+    "citeproc": "^2.4.63",
+    "docx": "^9.7.2",
+    "drizzle-orm": "^0.45.3",
+    "fast-xml-parser": "^5.11.1",
+    "fflate": "^0.8.3",
+    "hono": "^4.13.0",
+    "nodemailer": "^10.0.10",
+    "pg": "^8.23.0",
+    "sharp": "^0.35.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@litbase/citation": "workspace:*",
+    "@litbase/shared": "workspace:*",
+    "@types/node": "^22",
+    "@types/nodemailer": "^7",
+    "@types/pg": "^8.23.0",
+    "drizzle-kit": "^0.31.11",
+    "tsup": "^8.5.0",
+    "tsx": "^4.23.0"
+  }
+}
