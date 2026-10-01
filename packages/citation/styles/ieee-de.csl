@@ -52,10 +52,18 @@
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale xml:lang="de">
+    <style-options punctuation-in-quote="true"/>
     <terms>
       <term name="presented at">vorgestellt auf</term>
       <term name="available at">verfügbar unter</term>
       <term name="accessed">Zugriff am</term>
+      <term name="open-quote">"</term>
+      <term name="close-quote">"</term>
+      <term name="et-al">et al.</term>
+      <term name="editor" form="short">
+        <single>Hg.</single>
+        <multiple>Hg.</multiple>
+      </term>
     </terms>
   </locale>
   <!-- Macros -->
@@ -131,8 +139,9 @@
   </macro>
   <macro name="editor">
     <names variable="editor">
-      <name initialize-with=". " delimiter=", " and="text" delimiter-precedes-last="never"/>
+      <name et-al-min="7" et-al-use-first="1" initialize-with=". " delimiter=", " and="text" delimiter-precedes-last="never"/>
       <label form="short" prefix=", " text-case="capitalize-first"/>
+      <et-al font-style="italic"/>
     </names>
   </macro>
   <macro name="director">
@@ -145,7 +154,14 @@
     <group delimiter=", ">
       <text macro="edition"/>
       <group delimiter=" ">
-        <text term="volume" form="short"/>
+        <choose>
+          <if type="article-journal">
+            <text value="Jg."/>
+          </if>
+          <else>
+            <text term="volume" form="short"/>
+          </else>
+        </choose>
         <number variable="volume" form="numeric"/>
       </group>
       <group delimiter=" ">
@@ -307,16 +323,33 @@
   </macro>
   <!-- Series -->
   <macro name="collection">
-    <choose>
-      <if variable="collection-title" match="any">
-        <text term="in" suffix=" "/>
-        <group delimiter=", " suffix=". ">
-          <text variable="collection-title"/>
-          <text variable="collection-number" prefix="Nr. "/>
-          <text variable="volume" prefix="Bd. "/>
-        </group>
-      </if>
-    </choose>
+    <group delimiter=" " prefix="(" suffix=")">
+      <text variable="collection-title"/>
+      <text variable="collection-number"/>
+    </group>
+  </macro>
+  <macro name="chapter-container">
+    <group delimiter=", ">
+      <text macro="title"/>
+      <group delimiter=" ">
+        <text term="in"/>
+        <text variable="container-title" font-style="italic"/>
+        <text macro="collection"/>
+      </group>
+      <text macro="editor"/>
+      <text macro="locators"/>
+    </group>
+  </macro>
+  <macro name="chapter-publication">
+    <group delimiter=", ">
+      <text macro="publisher"/>
+      <text macro="issued"/>
+      <group delimiter=" ">
+        <label variable="chapter-number" form="short"/>
+        <text variable="chapter-number"/>
+      </group>
+      <text macro="page"/>
+    </group>
   </macro>
   <!-- Citation -->
   <citation collapse="citation-number">
@@ -350,11 +383,11 @@
             <text macro="status"/>
           </group>
           <choose>
-            <if variable="URL DOI" match="none">
-              <text value="."/>
+            <if variable="DOI">
+              <text value=","/>
             </if>
             <else>
-              <text value=","/>
+              <text value="."/>
             </else>
           </choose>
           <text macro="access"/>
@@ -362,10 +395,12 @@
         <else-if type="paper-conference speech" match="any">
           <group delimiter=", " suffix=", ">
             <text macro="title"/>
-            <text macro="event"/>
+            <group delimiter=" ">
+              <text macro="event"/>
+              <text macro="collection"/>
+            </group>
             <text macro="editor"/>
           </group>
-          <text macro="collection"/>
           <group delimiter=", " suffix=".">
             <text macro="publisher"/>
             <text macro="issued"/>
@@ -375,23 +410,20 @@
           <text macro="access"/>
         </else-if>
         <else-if type="chapter">
-          <group delimiter=", " suffix=".">
-            <text macro="title"/>
-            <group delimiter=" ">
-              <text term="in" suffix=" "/>
-              <text variable="container-title" font-style="italic"/>
-            </group>
-            <text macro="locators"/>
-            <text macro="editor"/>
-            <text macro="collection"/>
-            <text macro="publisher"/>
-            <text macro="issued"/>
-            <group delimiter=" ">
-              <label variable="chapter-number" form="short"/>
-              <text variable="chapter-number"/>
-            </group>
-            <text macro="page"/>
-          </group>
+          <choose>
+            <if variable="publisher publisher-place" match="any">
+              <group delimiter=". " suffix=".">
+                <text macro="chapter-container"/>
+                <text macro="chapter-publication"/>
+              </group>
+            </if>
+            <else>
+              <group delimiter=", " suffix=".">
+                <text macro="chapter-container"/>
+                <text macro="chapter-publication"/>
+              </group>
+            </else>
+          </choose>
           <text macro="access"/>
         </else-if>
         <else-if type="report">
@@ -478,10 +510,12 @@
         <!-- Generic/Fallback Formats -->
         <else-if type="bill book graphic legal_case legislation report song" match="any">
           <group delimiter=", " suffix=". ">
-            <text macro="title"/>
+            <group delimiter=" ">
+              <text macro="title"/>
+              <text macro="collection"/>
+            </group>
             <text macro="locators"/>
           </group>
-          <text macro="collection"/>
           <group delimiter=", " suffix=".">
             <text macro="publisher"/>
             <text macro="issued"/>
@@ -503,10 +537,12 @@
         <else>
           <group delimiter=", " suffix=". ">
             <text macro="title"/>
-            <text variable="container-title" font-style="italic"/>
+            <group delimiter=" ">
+              <text variable="container-title" font-style="italic"/>
+              <text macro="collection"/>
+            </group>
             <text macro="locators"/>
           </group>
-          <text macro="collection"/>
           <group delimiter=", " suffix=".">
             <text macro="publisher"/>
             <text macro="page"/>

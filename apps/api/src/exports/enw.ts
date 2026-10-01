@@ -48,12 +48,17 @@ function toEntry(fields: Fields): ImportEntry {
   // Bei Büchern ist %P der Umfang („320“, „1 online resource“), sonst der Seitenbereich.
   const isBook = type === 'book'
   const container = type === 'chapter' || type === 'paper-conference' ? (get('B') ?? get('J')) : (get('J') ?? get('B'))
+  // Beim Sammelband („Edited Book“) stehen die Herausgeber:innen in %A (so exportiert auch Citavi),
+  // %E ist dort die Reihenherausgeberschaft.
+  const edited = get('0')?.toLowerCase() === 'edited book'
+  const authors = (fields.get('A') ?? []).map(person)
+  const editors = [...(fields.get('E') ?? []), ...(fields.get('Y') ?? [])].map(person)
 
   const csl = sanitizeCsl({
     type,
     title: get('T'),
-    author: (fields.get('A') ?? []).map(person),
-    editor: [...(fields.get('E') ?? []), ...(fields.get('Y') ?? [])].map(person),
+    author: edited ? [] : authors,
+    editor: edited ? authors : editors,
     'container-title': container,
     'collection-title': get('S'),
     issued: parseDate(get('D')),

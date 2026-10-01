@@ -74,6 +74,11 @@ function enrich(csl: Record<string, unknown>, tags: Tags) {
   const editors = (tags.get('ED') ?? []).filter((v) => /[A-Za-zÀ-ž]/.test(v) && !/^\d/.test(v))
   if (editors.length > 0 && !csl.editor) csl.editor = editors.map(risName)
   if (editors.length > 0 && typeof csl.edition === 'string' && editors.includes(csl.edition)) delete csl.edition
+  // Sammelband (EDBOOK): AU sind laut RIS die Herausgeber:innen; citation-js legt sie doppelt an.
+  if (first(tags, 'TY') === 'EDBOOK' && Array.isArray(csl.author)) {
+    csl.editor ??= csl.author
+    delete csl.author
+  }
 
   // Bei Urteilen ist Y2 das Entscheidungsdatum und Y3 das Zugriffsdatum.
   if (csl.type === 'legal_case') {

@@ -212,7 +212,7 @@ export const de = {
     'paper-conference': 'Konferenzbeitrag',
     standard: 'Norm',
     thesis: 'Abschlussarbeit',
-    chapter: 'Buchkapitel',
+    chapter: 'Buchkapitel / Sammelbandbeitrag',
     article: 'Preprint / Artikel',
     'article-newspaper': 'Zeitungsartikel',
     'article-magazine': 'Magazinartikel',

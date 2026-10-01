@@ -1,6 +1,10 @@
 /** CSL-Typen, die das manuelle Formular anbietet, mit ihren Feldern (Reihenfolge = Anzeige). */
 export const manualItemTypes = {
   book: ['title', 'author', 'editor', 'edition', 'publisher', 'publisher-place', 'issued', 'ISBN', 'URL'],
+  chapter: [
+    'title', 'author', 'container-title', 'editor', 'edition', 'publisher', 'publisher-place',
+    'issued', 'page', 'ISBN', 'DOI', 'URL',
+  ],
   'article-journal': ['title', 'author', 'container-title', 'volume', 'issue', 'page', 'issued', 'DOI', 'URL'],
   webpage: ['title', 'author', 'container-title', 'issued', 'URL', 'accessed'],
   'paper-conference': [

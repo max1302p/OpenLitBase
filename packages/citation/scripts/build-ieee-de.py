@@ -24,14 +24,23 @@ replace("<id>http://www.zotero.org/styles/ieee</id>", "<id>ieee-de</id>")
 replace('<link href="http://www.zotero.org/styles/ieee" rel="self"/>',
         '<link href="http://www.zotero.org/styles/ieee" rel="template"/>')
 
-# Englische Locale-Overrides durch deutsche ersetzen
+# Englische Locale-Overrides durch deutsche ersetzen. Wie Citavis „IEEE Editorial (German, As of
+# 2024)“: "Titel," (gerade Anführungszeichen, Komma innerhalb), „et al.“, Herausgeber als „Hg.“.
 csl = re.sub(
     r'<locale xml:lang="en">.*?</locale>',
     """<locale xml:lang="de">
+    <style-options punctuation-in-quote="true"/>
     <terms>
       <term name="presented at">vorgestellt auf</term>
       <term name="available at">verfügbar unter</term>
       <term name="accessed">Zugriff am</term>
+      <term name="open-quote">"</term>
+      <term name="close-quote">"</term>
+      <term name="et-al">et al.</term>
+      <term name="editor" form="short">
+        <single>Hg.</single>
+        <multiple>Hg.</multiple>
+      </term>
     </terms>
   </locale>""",
     csl,
@@ -53,9 +62,111 @@ csl = csl.replace(
             <text term="accessed" text-case="capitalize-first"/>""",
 )
 
-# Reihen: „Nr.“/„Bd.“ statt „no.“/„vol.“
-replace('prefix="no. "', 'prefix="Nr. "')
-replace('prefix="vol. "', 'prefix="Bd. "')
+# Reihen wie bei Citavi direkt hinter dem Titel: „Titel (Reihe 14)“. Die Vorlage erzeugt sonst
+# „in Reihe, no. 14. ,“ mitten im Eintrag; der Band steht ohnehin in „locators“.
+csl = re.sub(r'<macro name="collection">.*?\n  </macro>', """<macro name="collection">
+    <group delimiter=" " prefix="(" suffix=")">
+      <text variable="collection-title"/>
+      <text variable="collection-number"/>
+    </group>
+  </macro>""", csl, count=1, flags=re.S)
+replace("""            <text macro="event"/>
+            <text macro="editor"/>
+          </group>
+          <text macro="collection"/>""", """            <group delimiter=" ">
+              <text macro="event"/>
+              <text macro="collection"/>
+            </group>
+            <text macro="editor"/>
+          </group>""")
+replace("""          <group delimiter=", " suffix=". ">
+            <text macro="title"/>
+            <text macro="locators"/>
+          </group>
+          <text macro="collection"/>""", """          <group delimiter=", " suffix=". ">
+            <group delimiter=" ">
+              <text macro="title"/>
+              <text macro="collection"/>
+            </group>
+            <text macro="locators"/>
+          </group>""")
+replace("""            <text variable="container-title" font-style="italic"/>
+            <text macro="locators"/>
+          </group>
+          <text macro="collection"/>""", """            <group delimiter=" ">
+              <text variable="container-title" font-style="italic"/>
+              <text macro="collection"/>
+            </group>
+            <text macro="locators"/>
+          </group>""")
+
+# Beitrag im Sammelband wie Citavi/IEEE: „A, "Kapitel," in Sammelband (Reihe 14), F. Frey, Hg.,
+# 2. Aufl. Ort: Verlag, Jahr, S. 88–170.“ – ohne Verlagsangaben nur mit Kommas.
+csl = re.sub(r'(<else-if type="chapter">\n).*?(\n          <text macro="access"/>)', r"""\1          <choose>
+            <if variable="publisher publisher-place" match="any">
+              <group delimiter=". " suffix=".">
+                <text macro="chapter-container"/>
+                <text macro="chapter-publication"/>
+              </group>
+            </if>
+            <else>
+              <group delimiter=", " suffix=".">
+                <text macro="chapter-container"/>
+                <text macro="chapter-publication"/>
+              </group>
+            </else>
+          </choose>\2""", csl, count=1, flags=re.S)
+replace("  <!-- Citation -->", """  <macro name="chapter-container">
+    <group delimiter=", ">
+      <text macro="title"/>
+      <group delimiter=" ">
+        <text term="in"/>
+        <text variable="container-title" font-style="italic"/>
+        <text macro="collection"/>
+      </group>
+      <text macro="editor"/>
+      <text macro="locators"/>
+    </group>
+  </macro>
+  <macro name="chapter-publication">
+    <group delimiter=", ">
+      <text macro="publisher"/>
+      <text macro="issued"/>
+      <group delimiter=" ">
+        <label variable="chapter-number" form="short"/>
+        <text variable="chapter-number"/>
+      </group>
+      <text macro="page"/>
+    </group>
+  </macro>
+  <!-- Citation -->""")
+
+# Zeitschriften: Komma nur vor „doi:“, vor „[Online]“ ein Punkt („…, 2007. [Online]. Verfügbar …“)
+replace("""            <if variable="URL DOI" match="none">
+              <text value="."/>
+            </if>
+            <else>
+              <text value=","/>
+            </else>""", """            <if variable="DOI">
+              <text value=","/>
+            </if>
+            <else>
+              <text value="."/>
+            </else>""")
+
+# Zeitschriften: „Jg.“ (Jahrgang) statt „Bd.“, wie Citavi
+replace("""      <group delimiter=" ">
+        <text term="volume" form="short"/>
+        <number variable="volume" form="numeric"/>""", """      <group delimiter=" ">
+        <choose>
+          <if type="article-journal">
+            <text value="Jg."/>
+          </if>
+          <else>
+            <text term="volume" form="short"/>
+          </else>
+        </choose>
+        <number variable="volume" form="numeric"/>""")
 
 # „o. J.“, wenn kein Erscheinungsdatum vorhanden ist
 replace('<macro name="issued">\n    <choose>', '<macro name="issued">\n    <choose>\n      <if variable="issued" match="none">\n        <text term="no date" form="short"/>\n      </if>\n      <else>\n    <choose>')
@@ -85,6 +196,19 @@ replace("""            <group delimiter=": ">
               </else>
             </choose>""")
 
+# Mehr als sechs Herausgeber:innen wie bei Autor:innen: „M. Brütsch et al.“
+replace('''    <names variable="editor">
+      <name initialize-with=". "''', '''    <names variable="editor">
+      <name et-al-min="7" et-al-use-first="1" initialize-with=". "''')
+replace('''      <label form="short" prefix=", " text-case="capitalize-first"/>
+    </names>
+  </macro>
+  <macro name="director">''', '''      <label form="short" prefix=", " text-case="capitalize-first"/>
+      <et-al font-style="italic"/>
+    </names>
+  </macro>
+  <macro name="director">''')
+
 # Bereiche zusammenfassen: [1]–[3]
 replace("<citation>", '<citation collapse="citation-number">')
 
@@ -102,13 +226,11 @@ replace("<id>ieee-de</id>", "<id>ieee-de-seite</id>")
 # pro Titel und Seite), im Text steht nur [n].
 replace("<info>", "<!-- openlitbase:locator-in-bibliography -->\n  <info>")
 
-replace("""<locale xml:lang="de">
-    <terms>""", """<locale xml:lang="de">
-    <style-options punctuation-in-quote="true"/>
-    <terms>
-      <term name="edition" form="short">Auflage</term>
+# Deutsche Anführungszeichen wie im Merkblatt („Titel,“) statt der geraden aus `ieee-de`
+csl = re.sub(r'<term name="open-quote">.*?<term name="et-al">', '<term name="et-al">', csl, count=1, flags=re.S)
+csl = re.sub(r'<term name="editor" form="short">.*?</term>', """<term name="edition" form="short">Auflage</term>
       <term name="editor" form="short">Hrsg.</term>
-      <term name="editor" form="verb-short">hrsg. von</term>""")
+      <term name="editor" form="verb-short">hrsg. von</term>""", csl, count=1, flags=re.S)
 
 # Autor:innen nur mit Komma trennen: „A. Badach, E. Hoffmann, O. Knauer“
 csl = csl.replace(' delimiter=", " and="text" delimiter-precedes-last="never"', ' delimiter=", "')
@@ -121,13 +243,19 @@ replace("""      <label form="short" prefix=", " text-case="capitalize-first"/>
 # Herausgeber eines Sammelbands: „in Titel, hrsg. von M. Brütsch, Marburg …“
 replace("""  <macro name="editor">
     <names variable="editor">
-      <name initialize-with=". " delimiter=", "/>
+      <name et-al-min="7" et-al-use-first="1" initialize-with=". " delimiter=", "/>
       <label form="short" prefix=", " text-case="capitalize-first"/>
+      <et-al font-style="italic"/>
     </names>""", """  <macro name="editor">
     <names variable="editor">
       <label form="verb-short" suffix=" "/>
-      <name initialize-with=". " delimiter=", "/>
+      <name et-al-min="7" et-al-use-first="1" initialize-with=". " delimiter=", "/>
+      <et-al font-style="italic"/>
     </names>""")
+# Sammelbandbeitrag mit Komma vor dem Verlagsort: „hrsg. von M. Brütsch et al., Marburg: Schüren“
+replace("""              <group delimiter=". " suffix=".">
+                <text macro="chapter-container"/>""", """              <group delimiter=", " suffix=".">
+                <text macro="chapter-container"/>""")
 
 # Online: „[Online] Available: URL (Abrufdatum 18.11.2015)“ – DOI hat weiter Vorrang
 csl = re.sub(r'<macro name="access">.*?\n  </macro>', """<macro name="access">

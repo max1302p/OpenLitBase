@@ -161,7 +161,10 @@ seinem letzten Projekt entfernt, wird er gelöscht.
 ### Zitierstile
 
 Standard ist **IEEE (Deutsch)** (`packages/citation/styles/ieee-de.csl`, erzeugt aus dem
-offiziellen `ieee.csl` mit `python3 packages/citation/scripts/build-ieee-de.py`). Mitgeliefert
+offiziellen `ieee.csl` mit `python3 packages/citation/scripts/build-ieee-de.py`). Die Ausgabe
+entspricht Citavis „IEEE Editorial (German, As of 2024)“, z. B. für einen Sammelbandbeitrag:
+`E. Twain und P. Singer, "Structuring your knowledge," in The art of writing (Scientific Publishing 14),
+F. Frey, Hg., 2. Aufl. Sheffield: Quickpress, 2004, S. 88–170.` Mitgeliefert
 sind ausserdem IEEE, APA 7, DIN 1505-2, Harvard, Chicago und **IEEE (Deutsch, Seite im
 Verzeichnis)** nach verbreiteten Hochschul-Merkblättern: Im Text steht nur „[1]“, die Seite
 erscheint im Verzeichnis („… 2008, S. 56.“), und derselbe Titel mit anderer Seite bekommt eine

@@ -4,6 +4,7 @@ import { Label } from '@litbase/ui/components/label'
 import { cn } from '@litbase/ui/lib/utils'
 import {
   BookIcon,
+  BookOpenIcon,
   FileBadgeIcon,
   GlobeIcon,
   GraduationCapIcon,
@@ -21,6 +22,7 @@ import { useCreateItem } from '../use-items'
 
 const TYPE_ICONS: Record<ManualItemType, LucideIcon> = {
   book: BookIcon,
+  chapter: BookOpenIcon,
   'article-journal': NewspaperIcon,
   webpage: GlobeIcon,
   'paper-conference': PresentationIcon,
