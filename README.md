@@ -355,6 +355,7 @@ Person (geteilte Projekte, Rolle „Lesen“ bleibt nur lesend) und können nich
 | `add_item_by_identifier`, `create_item`, `update_item` | Titel per DOI/ISBN/arXiv/PMID/URL oder CSL-JSON anlegen, Tags/Notizen ändern |
 | `get_bibliography` | Literaturverzeichnis als Text, Markdown oder BibTeX |
 | `update_research`, `update_term_matrix` | Forschungsdreisatz und Begriffsmatrix bearbeiten |
+| `get_protocol`, `update_protocol_entry` | Rechercheprotokoll: Zitation im Text, Themeneinordnung und Eignung je Titel |
 
 Im Modus `multi` braucht der Agent einen **API-Token** (Einstellungen → API-Tokens); die Adresse
 und den Befehl zeigt auch die Web-App unter Einstellungen → KI-Agenten.

@@ -4,6 +4,7 @@ import type { User } from '../types'
 import { readVersion } from '../version'
 import { registerItemTools } from './item-tools'
 import { registerProjectTools } from './project-tools'
+import { registerProtocolTools } from './protocol-tools'
 
 const version = readVersion()
 
@@ -21,6 +22,7 @@ export async function handleMcpRequest(request: Request, user: User) {
   const server = new McpServer({ name: 'openlitbase', title: 'OpenLitBase', version }, { instructions })
   registerProjectTools(server, user)
   registerItemTools(server, user)
+  registerProtocolTools(server, user)
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
   await server.connect(transport)
   return transport.handleRequest(request)
