@@ -1,6 +1,6 @@
 # Ein Image für alles: baut Web-App und Word-Add-in, die API liefert beide statisch aus.
 
-FROM node:22-alpine AS base
+FROM node:22.23.4-alpine AS base
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile --offline
 RUN pnpm build
 RUN pnpm --filter @litbase/api deploy --prod --legacy /out
 
-FROM node:22-alpine AS runtime
+FROM node:22.23.4-alpine AS runtime
 # openssl erzeugt beim ersten Start die lokale CA für HTTPS (Word lädt Add-ins nur über https),
 # pg_dump die nächtliche Datenbank-Sicherung (BACKUP_S3_BUCKET).
 RUN apk add --no-cache openssl postgresql17-client
